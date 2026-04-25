@@ -39,4 +39,3 @@ app.post('/get-service', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`LeafFix live on ${PORT}`));
-app.listen(3000, () => console.log('Kitchen is running at http://localhost:3000'));
