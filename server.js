@@ -1,0 +1,41 @@
+const express = require('express');
+const fs = require('fs'); 
+const path = require('path');
+const app = express();
+
+// 1. Tell the server where your files are
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true })); 
+
+// 2. The Home Page Route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// 3. The ONLY 'get-service' Chef you need
+app.post('/get-service', (req, res) => {
+    const name = req.body.userName;
+    const email = req.body.userEmail;
+    const phone = req.body.userPhone;
+
+    // 2. Prepare the note for your notebook
+    const entry = `Name: ${name} | email: ${email} |  Phone: ${phone} | Time: ${new Date().toLocaleString()}\n`;
+
+    // 3. Save it!
+    fs.appendFileSync('requests.txt', entry);
+
+    // Send the STYLED success page
+    res.send(`
+        <body style="background-color: #FDF9F0; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; margin: 0;">
+            <div style="background: white; padding: 50px; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 10px solid #1A2421;">
+                <h1 style="color: #1A2421; font-size: 3rem;">Success! ✅</h1>
+                <p style="font-size: 1.2rem; color: #555;">We have saved your request in our digital notebook.</p>
+                <p style="color: #666;">Our team will contact you shortly.</p>
+                <br>
+                <a href="/" style="background: #F4D03F; color: #1A2421; padding: 15px 25px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block;">Return to LeafFix</a>
+            </div>
+        </body>
+    `);
+});
+
+app.listen(3000, () => console.log('Kitchen is running at http://localhost:3000'));
